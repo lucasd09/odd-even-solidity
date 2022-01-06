@@ -21,15 +21,15 @@ describe("Game contract", () => {
     });
 
     it("Endereço do jogo", async () => {
-        expect(console.log(game.address))
+        expect(await console.log(game.address))
     })
 
     it("Endereço do player 1", async () => {
-        expect(console.log(player1.address))
+        expect(await console.log(player1.address))
     })
 
     it("Endereço do player 2", async () => {
-        expect(console.log(player2.address))
+        expect(await console.log(player2.address))
     })
     
     it("Jogadores escolhem par ou impar", async () => {
@@ -37,6 +37,8 @@ describe("Game contract", () => {
         game.choice(0, player1.address)
         //jogador2
         game.choice(1, player2.address)
+        
+        expect()
     })
 
     it("Jogadores fazem as apostas", async () => {
@@ -49,14 +51,21 @@ describe("Game contract", () => {
     })
 
     it("é possivel dar commit", async () => {
-        const hash1 = await game.hashData.call(nonce1, 20);
-        const hash2 = await game.hashData.call(nonce2, 1);
+        const hash1 = await game.hashData(nonce1, 20);
+        const hash2 = await game.hashData(nonce2, 1);
         
-        console.log(hash1);
-        console.log(hash2);
+        console.log(hash1, 20);
+        console.log(hash2, 1);
 
-        await game.commit({from: player1.address, value: web3.utils.toWei('1', 'ether')});
-        await game.commit({from: player2.address, value: web3.utils.toWei('1', 'ether')});
+        await game.commit(hash1, player1.address);
+        await game.commit(hash2, player2.address);
         expect()
+    })
+
+    it("é revelado os valores", async () => {
+        await game.reveal(nonce1, 20, player1.address);
+        await game.reveal(nonce2, 1, player2.address);
+
+        expect(game.getResult() == true)
     })
 })

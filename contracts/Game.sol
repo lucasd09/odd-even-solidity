@@ -2,6 +2,7 @@
 pragma solidity ^0.8.0;
 
 import "./CommitAuth.sol";
+import "hardhat/console.sol";
 
 contract Game {
     using CommitAuth for CommitAuth.CommitType;
@@ -55,7 +56,7 @@ contract Game {
         _;
     }
 
-    function choice(uint _choice, address _address) public {
+    function choice(uint _choice, address _address) public{
         if(_choice == 0){
             players[_address].playOfChoice = ChosenPlay.Even;
             players[_address].hasChosen = true;
@@ -74,14 +75,12 @@ contract Game {
         return pool;
     }
 
-    function commit( bytes32 h) public payable {
-        require(players[msg.sender].hasChosen == true, "player have to pick Odd or Even");
-        require(msg.value >0, "participants need to bet some value");
-        players[msg.sender].sc.commit(h);
+    function commit(bytes32 h, address _address) public payable {
+        players[_address].sc.commit(h);
     }
 
-    function reveal(string memory nonce, uint256 val) public{
-        players[msg.sender].sc.reveal(nonce,val);
+    function reveal(string memory nonce, uint256 val, address _address) public{
+        players[_address].sc.reveal(nonce,val);
         bool revealed1 = players[player1].sc.isRevealed();
         bool revealed2 = players[player2].sc.isRevealed();
         if(revealed1 && revealed2){
