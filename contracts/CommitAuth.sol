@@ -1,8 +1,6 @@
 //SPDX-License-Identifier: Unlicense
 pragma solidity ^0.8.0;
 
-import "hardhat/console.sol";
-
 library CommitAuth {
     enum CommitStatesType {
         Waiting,
@@ -30,7 +28,7 @@ library CommitAuth {
             c.verified = true;
             c.value = val;
         } else {
-            revert("revealed value is not the same as the commit"); 
+            revert("revealed value is not the same as the commit");
         }
     }
 

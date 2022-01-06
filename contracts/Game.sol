@@ -25,7 +25,7 @@ contract Game {
     uint total;
     address payable player1;
     address payable player2;
-    mapping(address  => Player) players;
+    mapping(address  => Player) public players;
 
     constructor(address payable _address1, address payable _address2) {
         ok = false;
@@ -56,18 +56,19 @@ contract Game {
         _;
     }
 
-    function choice(uint _choice, address _address) public{
+    function choice(uint _choice) public{
         if(_choice == 0){
-            players[_address].playOfChoice = ChosenPlay.Even;
-            players[_address].hasChosen = true;
+            players[msg.sender].playOfChoice = ChosenPlay.Even;
+            players[msg.sender].hasChosen = true;
         }
         if(_choice == 1){
-            players[_address].playOfChoice = ChosenPlay.Odd;
-            players[_address].hasChosen = true;
+            players[msg.sender].playOfChoice = ChosenPlay.Odd;
+            players[msg.sender].hasChosen = true;
         }
     }
 
     function doBet(uint256 _bet) public payable {
+        require(players[msg.sender].exists == true, "player tem que existir");
         pool += _bet;  
     }
 
@@ -75,12 +76,13 @@ contract Game {
         return pool;
     }
 
-    function commit(bytes32 h, address _address) public payable {
-        players[_address].sc.commit(h);
+    function commit(bytes32 h) public payable {
+        require(players[msg.sender].hasChosen == true, "jogador tem que escolher");
+        players[msg.sender].sc.commit(h);
     }
 
-    function reveal(string memory nonce, uint256 val, address _address) public{
-        players[_address].sc.reveal(nonce,val);
+    function reveal(string memory nonce, uint256 val) public{
+        players[msg.sender].sc.reveal(nonce,val);
         bool revealed1 = players[player1].sc.isRevealed();
         bool revealed2 = players[player2].sc.isRevealed();
         if(revealed1 && revealed2){
@@ -93,30 +95,36 @@ contract Game {
         bool hasRevealed2 = players[player2].sc.isRevealed();
 
         if(!hasRevealed1 && !hasRevealed2){
-            revert();
+            revert("um dos dois esta errado");
         }
 
         if (!hasRevealed1){
             player2.transfer(pool);
+            console.log("player2 venceu pq revelou");
         }
         if (!hasRevealed2){
             player1.transfer(pool);
+            console.log("player1 venceu pq revelou");
         }
 
         total = players[player1].sc.getValue() + players[player2].sc.getValue();
         if(total%2 == 0) {
             if(players[player1].playOfChoice == ChosenPlay.Even){
                  player1.transfer(pool);
+                 console.log("player1 venceu");
             }
             if(players[player2].playOfChoice == ChosenPlay.Even){
                  player2.transfer(pool);
+                 console.log("player2 venceu");
             }
         } else {
             if(players[player1].playOfChoice == ChosenPlay.Odd){
                  player1.transfer(pool);
+                 console.log("player1 venceu");
             }
             if(players[player2].playOfChoice == ChosenPlay.Odd){
                  player2.transfer(pool);
+                 console.log("player2 venceu");
             }  
         }
     }

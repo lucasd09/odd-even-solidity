@@ -1,4 +1,5 @@
 const { expect } = require("chai");
+const Web3 = require('web3');
 
 describe("Game contract", () => {
     let player1, player2, Game, game, Lib, lib;
@@ -34,20 +35,20 @@ describe("Game contract", () => {
     
     it("Jogadores escolhem par ou impar", async () => {
         //jogador 1
-        game.choice(0, player1.address)
+        await game.connect(player1).choice(0)
         //jogador2
-        game.choice(1, player2.address)
+        await game.connect(player2).choice(1)
         
         expect()
     })
 
     it("Jogadores fazem as apostas", async () => {
         //jogador 1
-        game.doBet(100)
+        await game.connect(player1).doBet(Web3.utils.toWei('1', 'ether'))
         //jogador 2
-        game.doBet(400)
+        await game.connect(player2).doBet(Web3.utils.toWei('1', 'ether'))
         console.log("valor da aposta: " + (await game.poolBalance()))
-        expect(await game.poolBalance() == 500)
+        expect(await game.poolBalance())
     })
 
     it("é possivel dar commit", async () => {
@@ -57,15 +58,20 @@ describe("Game contract", () => {
         console.log(hash1, 20);
         console.log(hash2, 1);
 
-        await game.commit(hash1, player1.address);
-        await game.commit(hash2, player2.address);
+        await game.connect(player1).commit(hash1);
+        await game.connect(player2).commit(hash2);
         expect()
     })
 
     it("é revelado os valores", async () => {
-        await game.reveal(nonce1, 20, player1.address);
-        await game.reveal(nonce2, 1, player2.address);
+        await game.connect(player1).reveal(nonce1, 20);
+        await game.connect(player2).reveal(nonce2, 1);
 
-        expect(game.getResult() == true)
+        console.log(await game.getResult())
+        expect(await game.getResult() == true)
+    })
+
+    it("o jogo é realizado e o ganhador recebe o premio", async () => {
+        await game.gameLogic()
     })
 })
