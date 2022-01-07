@@ -56,7 +56,13 @@ contract Game {
         _;
     }
 
-    function choice(uint _choice) public{
+    modifier isPlayer {
+        require (players[msg.sender].exists == true,
+         "msg.sender needs to be one of the participants");
+        _;
+   }    
+
+    function choice(uint _choice) public isPlayer chooseOnce{
         if(_choice == 0){
             players[msg.sender].playOfChoice = ChosenPlay.Even;
             players[msg.sender].hasChosen = true;
@@ -68,7 +74,7 @@ contract Game {
         }
     }
 
-    function doBet(uint256 _bet) public payable {
+    function doBet(uint256 _bet) public payable isPlayer{
         require(players[msg.sender].exists == true, "player tem que existir");
         pool += _bet;  
     }
@@ -77,12 +83,12 @@ contract Game {
         return pool;
     }
 
-    function commit(bytes32 h) public payable {
+    function commit(bytes32 h) public payable isPlayer{
         require(players[msg.sender].hasChosen == true, "jogador tem que escolher");
         players[msg.sender].sc.commit(h);
     }
 
-    function reveal(string memory nonce, uint256 val) public{
+    function reveal(string memory nonce, uint256 val) public isPlayer{
         players[msg.sender].sc.reveal(nonce,val);
         bool revealed1 = players[player1].sc.isRevealed();
         bool revealed2 = players[player2].sc.isRevealed();
@@ -91,7 +97,7 @@ contract Game {
         }
     }
 
-    function gameLogic() public payable{
+    function gameLogic() public payable isPlayer{
         bool hasRevealed1 = players[player1].sc.isRevealed();
         bool hasRevealed2 = players[player2].sc.isRevealed();
 
