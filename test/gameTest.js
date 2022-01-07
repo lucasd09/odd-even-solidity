@@ -1,5 +1,7 @@
 const { expect } = require("chai");
-const Web3 = require('web3');
+
+// jogador 1: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266
+// jogador 2: 0x70997970C51812dc3A010C7d01b50e0d17dc79C8
 
 describe("Game contract", () => {
     let player1, player2, Game, game, Lib, lib;
@@ -25,11 +27,11 @@ describe("Game contract", () => {
         expect(await console.log(game.address))
     })
 
-    it("Endereço do player 1", async () => {
+    it("player 1", async () => {
         expect(await console.log(player1.address))
     })
 
-    it("Endereço do player 2", async () => {
+    it("player 2", async () => {
         expect(await console.log(player2.address))
     })
     
@@ -44,34 +46,34 @@ describe("Game contract", () => {
 
     it("Jogadores fazem as apostas", async () => {
         //jogador 1
-        await game.connect(player1).doBet(Web3.utils.toWei('1', 'ether'))
+        await game.connect(player1).doBet(ethers.utils.parseEther('1'))
         //jogador 2
-        await game.connect(player2).doBet(Web3.utils.toWei('1', 'ether'))
+        await game.connect(player2).doBet(ethers.utils.parseEther('1'))
         console.log("valor da aposta: " + (await game.poolBalance()))
         expect(await game.poolBalance())
     })
 
-    it("é possivel dar commit", async () => {
+    it("o jogo começa", async () => {
+        // par ou impar
+        await game.connect(player1).choice(0) //jogador 1
+        await game.connect(player2).choice(1) //jogador 2
+ 
+        //apostas
+        await game.connect(player1).doBet(ethers.utils.parseEther('1'))//jogador 1
+        await game.connect(player2).doBet(ethers.utils.parseEther('1')) //jogador 2
+        console.log("valor da aposta: " + (await game.poolBalance()))
+
+        // commit
         const hash1 = await game.hashData(nonce1, 20);
-        const hash2 = await game.hashData(nonce2, 1);
-        
-        console.log(hash1, 20);
-        console.log(hash2, 1);
+        const hash2 = await game.hashData(nonce2, 2);
 
         await game.connect(player1).commit(hash1);
         await game.connect(player2).commit(hash2);
-        expect()
-    })
 
-    it("é revelado os valores", async () => {
+        // revelado valores
         await game.connect(player1).reveal(nonce1, 20);
-        await game.connect(player2).reveal(nonce2, 1);
+        await game.connect(player2).reveal(nonce2, 2);
 
-        console.log(await game.getResult())
-        expect(await game.getResult() == true)
-    })
-
-    it("o jogo é realizado e o ganhador recebe o premio", async () => {
-        await game.gameLogic()
+        await game.gameLogic();
     })
 })

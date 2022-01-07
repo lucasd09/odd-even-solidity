@@ -60,6 +60,7 @@ contract Game {
         if(_choice == 0){
             players[msg.sender].playOfChoice = ChosenPlay.Even;
             players[msg.sender].hasChosen = true;
+
         }
         if(_choice == 1){
             players[msg.sender].playOfChoice = ChosenPlay.Odd;
@@ -90,7 +91,7 @@ contract Game {
         }
     }
 
-    function gameLogic() public {
+    function gameLogic() public payable{
         bool hasRevealed1 = players[player1].sc.isRevealed();
         bool hasRevealed2 = players[player2].sc.isRevealed();
 
@@ -99,31 +100,31 @@ contract Game {
         }
 
         if (!hasRevealed1){
-            player2.transfer(pool);
+            player2.call{value: pool};
             console.log("player2 venceu pq revelou");
         }
         if (!hasRevealed2){
-            player1.transfer(pool);
+            player1.call{value: pool};
             console.log("player1 venceu pq revelou");
         }
 
         total = players[player1].sc.getValue() + players[player2].sc.getValue();
         if(total%2 == 0) {
             if(players[player1].playOfChoice == ChosenPlay.Even){
-                 player1.transfer(pool);
+                 player1.call{value: pool};
                  console.log("player1 venceu");
             }
             if(players[player2].playOfChoice == ChosenPlay.Even){
-                 player2.transfer(pool);
+                 player2.call{value: pool};
                  console.log("player2 venceu");
             }
         } else {
             if(players[player1].playOfChoice == ChosenPlay.Odd){
-                 player1.transfer(pool);
+                 player1.call{value: pool};
                  console.log("player1 venceu");
             }
             if(players[player2].playOfChoice == ChosenPlay.Odd){
-                 player2.transfer(pool);
+                 player2.call{value: pool};
                  console.log("player2 venceu");
             }  
         }
