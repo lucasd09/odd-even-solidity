@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="../test/gameTest.js"></script>
+    <title>teste contrato</title>
+</head>
+<body style="justify-content: center;">
+    <div style="display: flex; justify-content: space-evenly;">
+        <div>
+            <h1>Jogador 1:</h1>
+            <h3>escolha seu número:</h3>
+            <input id='n1'></input>
+            <h3>Par ou impar: (0 = par 1 = ímpar)</h3>
+            <input id='p1'></input>
+            <h3>Valor da aposta:</h3>
+            <input id='b1'></input>
+        </div>
+        <br/>
+        <div>
+            <h1>Jogador 2:</h1>
+            <h3>escolha seu número:</h3>
+            <input id='n2'></input>
+            <h3>Par ou impar: (0 = par 1 = ímpar)</h3>
+            <input id='p2'></input>
+            <h3>Valor da aposta:</h3>
+            <input id='b2'></input>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: center;">
+        <button type="submit" onclick={console.log(submit())}>Simular jogo</button>
+    </div>
+    
+</body>
+</html>
+<script>
+    function submit() {
+        const shell = require('shelljs')
+        console.log(shell.exec('whoami'))
+    }
+</script>
