@@ -45,10 +45,8 @@ describe("Game contract", () => {
     })
 
     it("Jogadores fazem as apostas", async () => {
-        //jogador 1
-        await game.connect(player1).doBet(ethers.utils.parseEther('1'))
-        //jogador 2
-        await game.connect(player2).doBet(ethers.utils.parseEther('1'))
+        await game.connect(player1).doBet(ethers.utils.parseEther('1')) //jogador 1
+        await game.connect(player2).doBet(ethers.utils.parseEther('1')) //jogador 2
         console.log("valor da aposta: " + (await game.poolBalance()))
         expect(await game.poolBalance())
     })
@@ -59,13 +57,13 @@ describe("Game contract", () => {
         await game.connect(player2).choice(1) //jogador 2
  
         //apostas
-        await game.connect(player1).doBet(ethers.utils.parseEther('1'))//jogador 1
+        await game.connect(player1).doBet(ethers.utils.parseEther('1')) //jogador 1
         await game.connect(player2).doBet(ethers.utils.parseEther('1')) //jogador 2
         console.log("valor da aposta: " + (await game.poolBalance()))
 
         // commit
-        const hash1 = await game.hashData(nonce1, 20);
-        const hash2 = await game.hashData(nonce2, 2);
+        const hash1 = await game.encrypt(nonce1, 20);
+        const hash2 = await game.encrypt(nonce2, 2);
 
         await game.connect(player1).commit(hash1);
         await game.connect(player2).commit(hash2);

@@ -136,7 +136,7 @@ contract Game {
         }
     }
 
-    function hashData(string memory nonce, uint256 val ) public pure returns (bytes32) {
+    function encrypt(string memory nonce, uint256 val ) public pure returns (bytes32) {
         return sha256(abi.encodePacked(nonce, val));
     }
 
